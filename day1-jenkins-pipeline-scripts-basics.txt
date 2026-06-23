@@ -1,0 +1,40 @@
+pipeline {
+    agent any
+    parameters {
+        choice(
+            name: 'action',
+            choices: ['apply', 'destroy'],
+            description: 'Terraform action'
+            )
+    }
+
+    stages {
+        stage('clone') {
+            steps {
+               git branch: 'main', url: 'https://github.com/VenkataSailaja/Terraform9am.git'
+            }
+        }
+        stage('init') {
+            steps {
+                dir('Day_1_Basic_code_Practice') {
+                    sh 'terraform init'
+                }
+                
+            }
+        }
+        stage('plan') {
+            steps {
+                dir('Day_1_Basic_code_Practice') {
+                sh 'terraform plan'
+                }
+            }
+        }
+        stage('apply/destroy') {
+            steps {
+                dir('Day_1_Basic_code_Practice') {
+                sh "terraform ${params.action} -auto-approve"
+                }
+            }
+        }
+    }
+}
